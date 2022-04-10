@@ -1,20 +1,15 @@
 import React from "react";
 import {
-  StyleSheet,
-  Image,
-  Text,
-  TextInput,
   View,
-  TouchableOpacity,
-  ImageBackground,
 } from "react-native";
 
-import LandingPage from "./LandingPage";
+import {LandingPage, LoginPage} from "./BeforeLogin";
 
 const App = () => {
   return (
     <View>
-      <LandingPage />
+      {/* <LandingPage /> */}
+      <LoginPage></LoginPage>
     </View>
   );
 };
