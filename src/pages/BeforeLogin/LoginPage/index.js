@@ -10,106 +10,25 @@ import {
   TextInput,
 } from "react-native";
 
-export const LandingPage = () => {
-  return (
-    <View>
-      <Image
-        source={require("./assets/img/LandingPage/logo.png")}
-        style={LandingPageStyle.logo}
-      />
-      <Text style={LandingPageStyle.title}>Welove</Text>
-      <Text style={LandingPageStyle.title2}>
-        Sayangi sampah skincare mu sayangi bumi hari ini
-      </Text>
-
-      <TouchableOpacity>
-        <ImageBackground
-          source={require("./assets/img/LandingPage/btn.png")}
-          style={LandingPageStyle.button}
-        />
-        <Text style={LandingPageStyle.textbtn}>Ayo Mulai!</Text>
-      </TouchableOpacity>
-    </View>
-  );
-};
-
-const LandingPageStyle = StyleSheet.create({
-  logo: {
-    position: "absolute",
-    width: 237,
-    height: 214,
-    left: 87,
-    top: 100,
-  },
-  title: {
-    position: "absolute",
-    width: 151,
-    height: 62,
-    left: 137,
-    top: 350,
-    fontFamily: "WLUIBesley",
-    fontStyle: "normal",
-    fontWeight: "400",
-    fontSize: 36,
-    display: "flex",
-    alignItems: "flex-end",
-    color: "#7D8F35",
-  },
-  title2: {
-    position: "absolute",
-    width: 269,
-    height: 51,
-    left: 71,
-    top: 461,
-    fontFamily: "WLUIAlata",
-    fontStyle: "normal",
-    fontWeight: "400",
-    fontSize: 19,
-    lineHeight: 26,
-    textAlign: "center",
-    letterSpacing: 0.25,
-    color: "#7D8F35",
-  },
-  button: {
-    position: "absolute",
-    width: 248.45,
-    height: 49.79,
-    left: 81,
-    top: 559,
-  },
-  textbtn: {
-    position: "absolute",
-    width: 269,
-    height: 30,
-    left: 71,
-    top: 569,
-    fontFamily: "WLUIAlata",
-    fontStyle: "normal",
-    fontWeight: "400",
-    fontSize: 20,
-    lineHeight: 28,
-    textAlign: "center",
-    letterSpacing: 0.25,
-    color: "white",
-  },
-});
 
 export const LoginPage = () => {
   return (
     <View>
       <Image
-        source={require("./assets/img/LandingPage/logo.png")}
+        source={require("../../../assets/img/BeforeLogin/logo.png")}
         style={LoginPageStyle.Logo}
       />
       <Text style={LoginPageStyle.text}>
         menjadi lebih peduli lingkungan dengan langkah kecil memilah sampah secara mandiri!
       </Text>
       
+      <Image source={require("../../../assets/img/BeforeLogin/user.png")} style={LoginPageStyle.imgEmail}/>
       <TextInput 
         style={LoginPageStyle.inputEmail}
         placeholder= "Masukkan Email"
         placeholderTextColor= 'black'
       />
+      <Image source={require("../../../assets/img/BeforeLogin/pass.png")} style={LoginPageStyle.imgPass}/>
       <TextInput 
         style={LoginPageStyle.inputPass}
         placeholder= "Masukkan Kata Sandi"
@@ -165,6 +84,16 @@ const LoginPageStyle = StyleSheet.create(
       borderColor: '#7D8F35',
       borderRadius: 8,
     },
+    imgEmail: {
+      padding: 10,
+      margin: 5,
+      height: 25,
+      width: 25,
+      top: 325,
+      left: 30,
+      resizeMode: 'stretch',
+      alignItems: 'center',
+    },
     inputPass: {
       borderWidth: 1,
       fontFamily: "Alice",
@@ -178,6 +107,16 @@ const LoginPageStyle = StyleSheet.create(
       "top": 380,
       borderColor: '#7D8F35',
       borderRadius: 8,
+    },
+    imgPass: {
+      padding: 10,
+      margin: 5,
+      height: 25,
+      width: 25,
+      top:360,
+      left: 30,
+      resizeMode: 'stretch',
+      alignItems: 'center',
     },
     btnMsk: {
       "position": "absolute",
@@ -268,6 +207,8 @@ const LoginPageStyle = StyleSheet.create(
       "textAlign": "center",
       "letterSpacing": 0.25,
       "color": "#7D8F35"
-    }
+    },
   }
 )
+
+export default LoginPage;
