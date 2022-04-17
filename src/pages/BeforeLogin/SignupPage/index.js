@@ -11,7 +11,7 @@ import {
 } from "react-native";
 
 
-export const SignupPage = () => {
+export const SignupPage = ({navigation}) => {
   return (
     <View>
       <Text style={SignupPageStyle.title}>
@@ -43,7 +43,7 @@ export const SignupPage = () => {
       <TouchableOpacity style={SignupPageStyle.btnMsk}>
         <Text style={SignupPageStyle.txtMsk}>Daftar Sekarang!</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={SignupPageStyle.btnLupa}>
+      <TouchableOpacity style={SignupPageStyle.btnLupa} onPress={() => navigation.navigate('LoginPage')}>
         <Text style={SignupPageStyle.txtLupa}>Sudah punya akun? Silahkan masuk!</Text>
       </TouchableOpacity>
     </View>

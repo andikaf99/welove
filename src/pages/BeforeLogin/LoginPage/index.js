@@ -6,12 +6,11 @@ import {
   Text,
   View,
   TouchableOpacity,
-  ImageBackground,
   TextInput,
 } from "react-native";
 
 
-export const LoginPage = () => {
+export const LoginPage = ({navigation}) => {
   return (
     <View>
       <Image
@@ -37,10 +36,10 @@ export const LoginPage = () => {
       <TouchableOpacity style={LoginPageStyle.btnMsk}>
         <Text style={LoginPageStyle.txtMsk}>Masuk</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={LoginPageStyle.btnLupa}>
+      <TouchableOpacity style={LoginPageStyle.btnLupa} onPress={() => navigation.navigate('ForgotPage')}>
         <Text style={LoginPageStyle.txtLupa}>Lupa Kata Sandi?</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={LoginPageStyle.btnNew}>
+      <TouchableOpacity style={LoginPageStyle.btnNew} onPress={() => navigation.navigate('SignupPage')}>
         <Text style={LoginPageStyle.txtNew}>Buat Akun Baru</Text>
       </TouchableOpacity>
     </View>

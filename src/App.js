@@ -3,17 +3,30 @@ import {
   ScrollView,
   View,
 } from "react-native";
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import LandingPage from "./pages/BeforeLogin/LandingPage";
 import LoginPage from "./pages/BeforeLogin/LoginPage";
 import SignupPage from "./pages/BeforeLogin/SignupPage";
+import ForgotPage from "./pages/BeforeLogin/ForgotPage";
+import InsertCode from "./pages/BeforeLogin/ForgotPage/InsertCode";
+import ResetPass from "./pages/BeforeLogin/ForgotPage/ResetPass";
+
+const Stack = createNativeStackNavigator();
+
 const App = () => {
   return (
-    <View>
-        {/* <LandingPage/> */}
-        {/* <LoginPage/> */}
-        <SignupPage/>
-    </View>
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={{headerShown: false}}>
+          <Stack.Screen name="LandingPage" component={LandingPage}/>
+          <Stack.Screen name="LoginPage" component={LoginPage}/>
+          <Stack.Screen name="ForgotPage" component={ForgotPage}/>
+          <Stack.Screen name="InsertCode" component={InsertCode}/>
+          <Stack.Screen name="ResetPass" component={ResetPass}/>
+          <Stack.Screen name="SignupPage" component={SignupPage}/>
+        </Stack.Navigator>
+      </NavigationContainer>
   );
 };
 

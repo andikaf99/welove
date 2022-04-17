@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import {
   StyleSheet,
@@ -10,7 +10,7 @@ import {
   TextInput,
 } from "react-native";
 
-export const LandingPage = () => {
+export const LandingPage = ({navigation}) => {
   return (
     <View>
       <Image
@@ -22,7 +22,7 @@ export const LandingPage = () => {
         Sayangi sampah skincare mu sayangi bumi hari ini
       </Text>
 
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate('LoginPage')}>
         <ImageBackground
           source={require("../../../assets/img/BeforeLogin/btn.png")}
           style={LandingPageStyle.button}
