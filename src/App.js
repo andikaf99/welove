@@ -12,6 +12,7 @@ import SignupPage from "./pages/BeforeLogin/SignupPage";
 import ForgotPage from "./pages/BeforeLogin/ForgotPage";
 import InsertCode from "./pages/BeforeLogin/ForgotPage/InsertCode";
 import ResetPass from "./pages/BeforeLogin/ForgotPage/ResetPass";
+import DashboardUser from "./pages/DashboardUser";
 
 const Stack = createNativeStackNavigator();
 
@@ -25,6 +26,7 @@ const App = () => {
           <Stack.Screen name="InsertCode" component={InsertCode}/>
           <Stack.Screen name="ResetPass" component={ResetPass}/>
           <Stack.Screen name="SignupPage" component={SignupPage}/>
+          <Stack.Screen name="DashboardUser" component={DashboardUser}/>
         </Stack.Navigator>
       </NavigationContainer>
   );
