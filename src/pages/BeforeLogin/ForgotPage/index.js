@@ -1,17 +1,76 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import {
   StyleSheet,
   Image,
   Text,
-  View,
   TouchableOpacity,
   TextInput,
+  StatusBar,
+  ActivityIndicator
 } from "react-native";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useForm, Controller } from "react-hook-form";
+import * as Axios from 'axios';
+import FlashMessage, { showMessage } from "react-native-flash-message";
 
 export const ForgotPage = ({navigation}) => {
+
+  const ForgotPageRef = React.useRef();
+
+  const { control, handleSubmit, getValues, formState: { errors } } = useForm({
+    defaultValues: {
+      Email: 'andikafadilla.af@gmail.com',
+    }
+  });
+
+  const [shouldShow, setShouldShow] = useState(false);
+
+  const configAxios = {
+    onUploadProgress: () => setShouldShow(true)
+  }
+
+  const onSubmit = (data) => {
+      Axios.post('https://api.welove.web.id/index.php/BeforeLogin/ForgotPass', data, configAxios).then(res => {
+        if(res.status == '200')
+        {
+          if(res.data.status == '1')
+          {
+            setShouldShow(false)
+            navigation.navigate('InsertCode',{EmailParams : getValues("Email")});
+          }
+          else if(res.data.status == '0')
+          {
+            setShouldShow(false)
+            ForgotPageRef.current.showMessage({
+              message: "Email tidak ditemukan!",
+              description: "harap ulangi lagi",
+              type: "default",
+              backgroundColor: "#D82148",
+              icon : "danger"
+            });
+          }
+        }
+        else{
+          setShouldShow(false)
+          ForgotPageRef.current.showMessage({
+            message: "Server tidak merespon",
+            description: "harap ulangi lagi",
+            type: "default",
+            backgroundColor: "#D82148",
+            icon : "danger"
+          });
+        }
+      });
+  }
+
     return (
-        <View>
+        <SafeAreaView style={{flex:1,paddingTop: StatusBar.currentHeight}}>
+          <KeyboardAwareScrollView keyboardShouldPersistTaps={'always'}
+        contentContainerStyle={{flexGrow:1}}
+        showsVerticalScrollIndicator={false} >
+          {shouldShow ? <ActivityIndicator  size="large" /> : null}
           <Image
             source={require("../../../assets/img/BeforeLogin/logo.png")}
             style={LoginPageStyle.Logo}
@@ -21,36 +80,57 @@ export const ForgotPage = ({navigation}) => {
           </Text>
           
           <Image source={require("../../../assets/img/BeforeLogin/user.png")} style={LoginPageStyle.imgEmail}/>
-          <TextInput 
+          <Controller
+        control={control}
+        rules={{
+         required: true,
+         pattern: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
+        }}
+        render={({ field: { onChange, onBlur, value } }) => (
+          <TextInput
+            style={LoginPageStyle.inputEmail}
+            onBlur={onBlur}
+            onChangeText={onChange}
+            value={value}
+            placeholder= "Email"
+            placeholderTextColor= 'black'
+          />
+        )}
+        name="Email"
+      />
+      {errors.Email && <Text style={LoginPageStyle.EmailError}>email tidak valid</Text>}
+
+          {/* <TextInput 
             style={LoginPageStyle.inputEmail}
             placeholder= "Masukkan email yang terdaftar"
             placeholderTextColor= 'black'
-          />
-          <TouchableOpacity style={LoginPageStyle.btnMsk} onPress={() => navigation.navigate('InsertCode')}>
+          /> */}
+
+          <TouchableOpacity style={LoginPageStyle.btnMsk} onPress={handleSubmit(onSubmit)}>
             <Text style={LoginPageStyle.txtMsk}>Kirim Kode</Text>
           </TouchableOpacity>
           <TouchableOpacity style={LoginPageStyle.btnNew} onPress={() => navigation.navigate('SignupPage')}>
             <Text style={LoginPageStyle.txtNew}>Buat Akun Baru</Text>
           </TouchableOpacity>
-        </View>
+          </KeyboardAwareScrollView>
+          <FlashMessage position="top" ref={ForgotPageRef}/>
+        </SafeAreaView>
       );
 }
 
 const LoginPageStyle = StyleSheet.create(
     {
       Logo : {
-        "position": "absolute",
         "width": 222,
         "height": 185,
         "left": 95,
         "top": 40
       },
       text : {
-        "position": "absolute",
         "width": 277,
         "height": 46,
         "left": 65,
-        "top": 235,
+        "top": 35,
         "fontFamily": "WLUIBesley",
         "fontStyle": "normal",
         "fontWeight": "600",
@@ -65,54 +145,41 @@ const LoginPageStyle = StyleSheet.create(
         fontStyle: "normal",
         fontWeight: "400",
         fontSize: 15,
-        "position": "absolute",
         "width": 270,
         "height": 44,
         "left": 71,
-        "top": 320,
+        "top": 30,
         borderColor: '#7D8F35',
         borderRadius: 8,
+      },
+      EmailError : {
+        "width": 150,
+        "height": 20,
+        "left": 50,
+        "top": 30,
+        "fontFamily": "WLUIBesley",
+        "fontStyle": "normal",
+        "fontWeight": "600",
+        "fontSize": 12,
+        "lineHeight": 23,
+        "textAlign": "center",
+        "color": "#FC4F4F"
       },
       imgEmail: {
         padding: 10,
         margin: 5,
         height: 25,
         width: 25,
-        top: 325,
-        left: 30,
-        resizeMode: 'stretch',
-        alignItems: 'center',
-      },
-      inputPass: {
-        borderWidth: 1,
-        fontFamily: "Alice",
-        fontStyle: "normal",
-        fontWeight: "400",
-        fontSize: 15,
-        "position": "absolute",
-        "width": 270,
-        "height": 44,
-        "left": 71,
-        "top": 380,
-        borderColor: '#7D8F35',
-        borderRadius: 8,
-      },
-      imgPass: {
-        padding: 10,
-        margin: 5,
-        height: 25,
-        width: 25,
-        top:360,
+        top: 70,
         left: 30,
         resizeMode: 'stretch',
         alignItems: 'center',
       },
       btnMsk: {
-        "position": "absolute",
         "width": 270,
         "height": 40,
         "left": 71,
-        "top": 460,
+        "top": 80,
         "backgroundColor": "#7D8F35",
         "borderWidth": 1,
         "borderColor": "#7D8F35",
@@ -124,7 +191,6 @@ const LoginPageStyle = StyleSheet.create(
         "borderBottomLeftRadius": 6
       },
       txtMsk: {
-        "position": "absolute",
         "width": 158,
         "left": 55,
         "top": 10,
@@ -137,42 +203,11 @@ const LoginPageStyle = StyleSheet.create(
         "letterSpacing": 0.25,
         "color": "#ffff"
       },
-      btnLupa: {
-        "position": "absolute",
-        "width": 270,
-        "height": 40,
-        "left": 71,
-        "top": 510,
-        "backgroundColor": "##F8F8F8",
-        "borderWidth": 1,
-        "borderColor": "#7D8F35",
-        "borderStyle": "solid",
-        "boxSizing": "border-box",
-        "borderTopLeftRadius": 6,
-        "borderTopRightRadius": 6,
-        "borderBottomRightRadius": 6,
-        "borderBottomLeftRadius": 6
-      },
-      txtLupa: {
-        "position": "absolute",
-        "width": 200,
-        "left": 35,
-        "top": 10,
-        "fontFamily": "Alice",
-        "fontStyle": "normal",
-        "fontWeight": "400",
-        "fontSize": 20,
-        "lineHeight": 21,
-        "textAlign": "center",
-        "letterSpacing": 0.25,
-        "color": "#7D8F35"
-      },
       btnNew: {
-        "position": "absolute",
         "width": 270,
         "height": 40,
         "left": 71,
-        "top": 510,
+        "top": 100,
         "backgroundColor": "##F8F8F8",
         "borderWidth": 1,
         "borderColor": "#7D8F35",
@@ -184,7 +219,6 @@ const LoginPageStyle = StyleSheet.create(
         "borderBottomLeftRadius": 6
       },
       txtNew: {
-        "position": "absolute",
         "width": 200,
         "left": 35,
         "top": 10,

@@ -1,5 +1,4 @@
-import React from 'react'
-
+import React, { useState } from 'react'
 import {
   StyleSheet,
   Image,
@@ -7,9 +6,75 @@ import {
   View,
   TouchableOpacity,
   TextInput,
+  ActivityIndicator,
 } from "react-native";
+import { useForm, Controller } from "react-hook-form";
+import * as Axios from 'axios';
+import FlashMessage, { showMessage } from "react-native-flash-message";
 
-export const InsertCode = ({navigation}) => {
+export const InsertCode = ({route, navigation}) => {
+
+  const InsertCodeRef = React.useRef();
+
+  const { control, handleSubmit, setValue, getValues, formState: { errors } } = useForm({
+    defaultValues: {
+      Code: '',
+      Email: '',
+    }
+  });
+  const [shouldShow, setShouldShow] = useState(false);
+  const configAxios = {
+    onUploadProgress: () => setShouldShow(true)
+  }
+  const {EmailParams} = route.params;
+  const onSubmit = (data) => {
+    setValue("Email",EmailParams);
+      Axios.post('https://api.welove.web.id/index.php/BeforeLogin/InsertCode', data, configAxios).then(res => {  
+      console.log(res);
+      if(res.status == '200')
+        {
+          if(res.data.status == '1')
+          {
+            setShouldShow(false)
+            navigation.navigate('ResetPass',{EmailParams : getValues("Email")});
+          }
+          else if(res.data.status == '0')
+          {
+            setShouldShow(false)
+            InsertCodeRef.current.showMessage({
+              message: "Kode yang dimasukkan salah!",
+              description: "harap ulangi lagi",
+              type: "default",
+              backgroundColor: "#D82148",
+              icon : "danger"
+            });
+          }
+          else if(res.data.status == '2')
+          {
+            setShouldShow(false)
+            InsertCodeRef.current.showMessage({
+              message: "silahkan klik tombol submit lagi",
+              description: "",
+              type: "default",
+              backgroundColor: "#D82148",
+              icon : "danger"
+            });
+          }
+        }
+        else{
+          setShouldShow(false)
+          InsertCodeRef.current.showMessage({
+            message: "Server tidak merespon",
+            description: "harap ulangi lagi",
+            type: "default",
+            backgroundColor: "#D82148",
+            icon : "danger"
+          });
+        }
+      });
+  }
+
+
     return (
         <View>
           <Image
@@ -17,17 +82,34 @@ export const InsertCode = ({navigation}) => {
             style={LoginPageStyle.Logo}
           />
           <Text style={LoginPageStyle.text}>
-            Silahkan masukkan kode yang telah dikirim ke email
+          Cek kotak email kamu untuk mendapatkan kode verifikasi perubahan kata sandi
           </Text>
-          
-          <TextInput 
+          {shouldShow ? <ActivityIndicator  size="large" /> : null}
+          <Controller
+          control={control}
+          rules={{
+          required: true,
+          pattern: /^([a-z0-9]+)$/i,
+          minLength: 5,
+          maxLength: 5,
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput 
             style={LoginPageStyle.inputEmail}
-            placeholder= "Masukkan 6 digit kode"
+            onBlur={onBlur}
+            onChangeText={onChange}
+            value={value}
+            placeholder= "Masukkan 5 digit kode"
             placeholderTextColor= 'black'
           />
-          <TouchableOpacity style={LoginPageStyle.btnMsk} onPress={() => navigation.navigate('ResetPass')}>
+          )} 
+          name="Code"
+          />
+          {errors.Code && <Text style={LoginPageStyle.EmailError}>kode tidak valid</Text>}
+          <TouchableOpacity style={LoginPageStyle.btnMsk} onPress={handleSubmit(onSubmit)}>
             <Text style={LoginPageStyle.txtMsk}>Submit</Text>
           </TouchableOpacity>
+          <FlashMessage position="top" ref={InsertCodeRef}/>
         </View>
       );
 }
@@ -54,6 +136,19 @@ const LoginPageStyle = StyleSheet.create(
         "lineHeight": 25,
         "textAlign": "center",
         "color": "rgba(0, 0, 0, 0.41)"
+      },
+      EmailError : {
+        "width": 150,
+        "height": 20,
+        "left": 50,
+        "top": 365,
+        "fontFamily": "WLUIBesley",
+        "fontStyle": "normal",
+        "fontWeight": "600",
+        "fontSize": 12,
+        "lineHeight": 23,
+        "textAlign": "center",
+        "color": "#FC4F4F"
       },
       inputEmail: {
         borderWidth: 1,
@@ -139,7 +234,7 @@ const LoginPageStyle = StyleSheet.create(
         "height": 40,
         "left": 71,
         "top": 510,
-        "backgroundColor": "##F8F8F8",
+        "backgroundColor": "#F8F8F8",
         "borderWidth": 1,
         "borderColor": "#7D8F35",
         "borderStyle": "solid",
@@ -169,7 +264,7 @@ const LoginPageStyle = StyleSheet.create(
         "height": 40,
         "left": 71,
         "top": 510,
-        "backgroundColor": "##F8F8F8",
+        "backgroundColor": "#F8F8F8",
         "borderWidth": 1,
         "borderColor": "#7D8F35",
         "borderStyle": "solid",

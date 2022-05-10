@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 import {
@@ -9,44 +9,58 @@ import {
   TouchableOpacity,
   TextInput,
   StatusBar,
+  ActivityIndicator,
 } from "react-native";
 
 import * as Axios from 'axios';
 
-import FlashMessage, { showMessage } from "react-native-flash-message";
+import FlashMessage from "react-native-flash-message";
+import { showMessage } from "react-native-flash-message";
 
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
-export const LoginPage = ({route, navigation}) => {
-  const passParams  = route.params;
+export const LoginPage = ({navigation}) => {
 
-  const { control, handleSubmit, watch, formState: { errors } } = useForm({
+  const LoginRef = React.useRef(null);
+
+  const { control, handleSubmit, formState: { errors } } = useForm({
     defaultValues: {
-      Email: '',
-      Pass: '',
+      Email: 'andikafadilla.af@gmail.com',
+      Pass: 'welvoe123',
     }
   });
 
+  const [shouldShow, setShouldShow] = useState(false);
+
+  const configAxios = {
+    onUploadProgress: () => setShouldShow(true)
+  }
+
   const onSubmit = (data) => {
-    Axios.post('https://api.welove.web.id/index.php/BeforeLogin/LoginPage', data).then(res => {
-      console.log(res.data);  
-    if(res.data.status == '1')
+    Axios.post('https://api.welove.web.id/index.php/BeforeLogin/LoginPage', data, configAxios).then(res => {
+    if(res.status == '200')
       {
-        navigation.navigate('DashboardUser');
-      }
-      else if(res.data.status == '404')
-      {
-        showMessage({
-          message: "Email dan kata sandi salah!",
-          description: "harap ulangi lagi",
-          type: "default",
-          backgroundColor: "#D82148",
-          icon : "danger"
-        });
+        if(res.data.status == '1')
+        {
+          setShouldShow(false)
+          navigation.navigate('DashboardUser');
+        }
+        else if(res.data.status == '0')
+        {
+          setShouldShow(false)
+          LoginRef.current.showMessage({
+            message: "Email dan kata sandi salah!",
+            description: "harap ulangi lagi",
+            type: "default",
+            backgroundColor: "#D82148",
+            icon : "danger"
+          });
+        }
       }
     else
       {
-        showMessage({
+        setShouldShow(false)
+        LoginRef.current.showMessage({
           message: "Server tidak merespon",
           description: "harap ulangi lagi",
           type: "default",
@@ -56,6 +70,7 @@ export const LoginPage = ({route, navigation}) => {
       }
     })
   };
+
   return (
     <SafeAreaView style={{flex:1,paddingTop: StatusBar.currentHeight}}>
     <KeyboardAwareScrollView  keyboardShouldPersistTaps={'always'}
@@ -68,7 +83,7 @@ export const LoginPage = ({route, navigation}) => {
             <Text style={LoginPageStyle.text}>
               menjadi lebih peduli lingkungan dengan langkah kecil memilah sampah secara mandiri!
             </Text>
-            
+
             <Image source={require("../../../assets/img/BeforeLogin/user.png")} style={LoginPageStyle.imgEmail}/>
             <Controller
               control={control}
@@ -81,7 +96,7 @@ export const LoginPage = ({route, navigation}) => {
                   style={LoginPageStyle.inputEmail}
                   onBlur={onBlur}
                   onChangeText={onChange}
-                  value={passParams ? JSON.parse(JSON.stringify(passParams)).emailParams : value}
+                  value={value}
                   placeholder= "Email"
                   placeholderTextColor= 'black'
                 />
@@ -89,6 +104,8 @@ export const LoginPage = ({route, navigation}) => {
               name="Email"
             />
             {errors.Email && <Text style={LoginPageStyle.EmailError}>email tidak valid</Text>}
+            
+            {shouldShow ? <ActivityIndicator  size="large" /> : null}
 
             <Image source={require("../../../assets/img/BeforeLogin/pass.png")} style={LoginPageStyle.imgPass}/>
             <Controller
@@ -118,10 +135,10 @@ export const LoginPage = ({route, navigation}) => {
               <Text style={LoginPageStyle.txtLupa}>Lupa Kata Sandi?</Text>
             </TouchableOpacity>
             <TouchableOpacity style={LoginPageStyle.btnNew} onPress={() => navigation.navigate('SignupPage')}>
-              <Text style={LoginPageStyle.txtNew}>Buat Akun Baru</Text>
+              <Text style={LoginPageStyle.txtNew}>Registrasi</Text>
             </TouchableOpacity>
     </KeyboardAwareScrollView>
-    <FlashMessage position="top"/>
+    <FlashMessage position="top" ref={LoginRef}/>
     </SafeAreaView>
   );
 };
@@ -135,14 +152,14 @@ const LoginPageStyle = StyleSheet.create(
       "top": 30
     },
     text : {
-      "width": 277,
+      "width": 350,
       "height": 46,
-      "left": 65,
+      "left": 25,
       "top": 30,
       "fontFamily": "Amiko",
       "fontStyle": "normal",
       "fontWeight": "600",
-      "fontSize": 12,
+      "fontSize": 16,
       "lineHeight": 23,
       "textAlign": "center",
       "color": "rgba(0, 0, 0, 0.41)"
@@ -157,7 +174,7 @@ const LoginPageStyle = StyleSheet.create(
       "height": 44,
       "left": 71,
       "top": 20,
-      borderColor: '#7D8F35',
+      borderColor: '#FFA1A1',
       borderRadius: 8,
     },
     EmailError : {
@@ -193,7 +210,7 @@ const LoginPageStyle = StyleSheet.create(
       "height": 44,
       "left": 71,
       "top": 0,
-      borderColor: '#7D8F35',
+      borderColor: '#FFA1A1',
       borderRadius: 8,
     },
     PassError : {
@@ -252,7 +269,7 @@ const LoginPageStyle = StyleSheet.create(
       "height": 40,
       "left": 71,
       "top": 40,
-      "backgroundColor": "##F8F8F8",
+      "backgroundColor": "#F8F8F8",
       "borderWidth": 1,
       "borderColor": "#7D8F35",
       "borderStyle": "solid",
@@ -280,7 +297,7 @@ const LoginPageStyle = StyleSheet.create(
       "height": 40,
       "left": 71,
       "top": 50,
-      "backgroundColor": "##F8F8F8",
+      "backgroundColor": "#7D8F35",
       "borderWidth": 1,
       "borderColor": "#7D8F35",
       "borderStyle": "solid",
@@ -302,7 +319,7 @@ const LoginPageStyle = StyleSheet.create(
       "lineHeight": 21,
       "textAlign": "center",
       "letterSpacing": 0.25,
-      "color": "#7D8F35"
+      "color": "#fff"
     },
   }
 )

@@ -9,7 +9,7 @@ function DashboardUser() {
         <KeyboardAwareScrollView  keyboardShouldPersistTaps={'always'}
         contentContainerStyle={{flexGrow:1}}
         showsVerticalScrollIndicator={false}></KeyboardAwareScrollView>
-        <Text style={{fontSize:50}}>Halo !</Text>
+        <Text style={{fontSize:50}}>Halo Welove!</Text>
     </SafeAreaView>
   )
 }

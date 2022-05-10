@@ -1,5 +1,5 @@
-
-import React from "react";
+import React, { useRef, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 
 import {
   StyleSheet,
@@ -8,42 +8,92 @@ import {
   TouchableOpacity,
   TextInput,
   StatusBar,
+  ActivityIndicator
 } from "react-native";
 
 import * as Axios from 'axios';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import FlashMessage from "react-native-flash-message";
 import { showMessage } from "react-native-flash-message";
-import { useForm, Controller } from "react-hook-form";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 export const SignupPage = ({navigation}) => {
 
+  const SignupPageRef = useRef(null);
+
   const { control, handleSubmit, watch, formState: { errors } } = useForm({
     defaultValues: {
-      NoTelp: '',
-      Email: '',
-      Pass: '',
-      Pass2: '',
+      NoTelp: '082186277470',
+      Email: 'andikafadilla.af@gmail.com',
+      Pass: 'welove123',
+      Pass2: 'welove123',
     }
   });
 
+  const [shouldShow, setShouldShow] = useState(false);
+
+  const configAxios = {
+    onUploadProgress: () => setShouldShow(true)
+  }
+
   const onSubmit = (data) => {
-    Axios.post('https://api.welove.web.id/index.php/BeforeLogin/SignupPage', data).then(res => {
-      if(res.data == 'success')
-      {
-        navigation.navigate('LoginPage',{statusSignup: 'success', emailParams: data.Email});
-      }
+    if(watch('Pass') == watch('Pass2'))
+    {
+      Axios.post('https://api.welove.web.id/index.php/BeforeLogin/SignupPage', data, configAxios).then(res => {
+        // console.log(res.data.status);
+        if(res.status == '200')
+        {
+          if(res.data.status == '1')
+          {
+            setShouldShow(false)
+            // navigation.navigate('LoginPage',{statusSignup: 'success', emailParams: data.Email});
+          }
+          else if(res.data.status == '0')
+          {
+            setShouldShow(false)
+            SignupPageRef.current.showMessage({
+              message: "Server tidak merespon",
+              description: "harap ulangi lagi",
+              type: "default",
+              backgroundColor: "#D82148",
+              icon : "danger"
+            });
+          }
+          else if(res.data.status == '2')
+          {
+            setShouldShow(false);
+            SignupPageRef.current.showMessage({
+              message: "email atau no telepon sudah digunakan",
+              description: "silahkan login",
+              type: "default",
+              backgroundColor: "#D82148",
+              icon : "danger"
+            });
+          }
+          else
+          {
+            setShouldShow(false)
+            SignupPageRef.current.showMessage({
+              message: "Server tidak merespon",
+              description: "harap ulangi lagi",
+              type: "default",
+              backgroundColor: "#D82148",
+              icon : "danger"
+            });
+          }
+        }
       else
-      {
-        showMessage({
-          message: "Server tidak merespon",
-          description: "harap ulangi lagi",
-          type: "default",
-          backgroundColor: "#D82148",
-          icon : "danger"
-        });
-      }
-    });
+        {
+          setShouldShow(false)
+          showMessage({
+            message: "Server tidak merespon",
+            description: "harap ulangi lagi",
+            type: "default",
+            backgroundColor: "#D82148",
+            icon : "danger"
+          });
+        }
+      });
+    }
   }
 
   return (
@@ -101,6 +151,8 @@ export const SignupPage = ({navigation}) => {
       />
       {errors.Email && <Text style={SignupPageStyle.EmailError}>email tidak valid</Text>}
 
+      {shouldShow ? <ActivityIndicator  size="large" /> : null}
+      
       <Controller
         control={control}
         rules={{
@@ -142,35 +194,17 @@ export const SignupPage = ({navigation}) => {
       />
       {watch('Pass') != watch('Pass2') && <Text style={SignupPageStyle.Pass2Error}>kata sandi tidak sama</Text>}
 
-        {/* <TextInput value={NoTelp} onChangeText={(value) => setNoTelp(value)}
-          style={SignupPageStyle.inputTelp}
-          placeholder= "Nomor Telepon"
-          placeholderTextColor= 'black'
-        /> */}
-        {/* <TextInput value={Email} onChangeText={(value) => setEmail(value)}
-          style={SignupPageStyle.inputEmail}
-          placeholder= "Masukkan Email"
-          placeholderTextColor= 'black'
-        /> */}
-        {/* <TextInput value={Pass} onChangeText={(value) => setPass(value)} secureTextEntry={true}
-          style={SignupPageStyle.inputPass}
-          placeholder= "Kata Sandi"
-          placeholderTextColor= 'black'
-        />
-        <TextInput value={Pass2} onChangeText={(value) => setPass2(value)} secureTextEntry={true}
-          style={SignupPageStyle.inputPass2}
-          placeholder= "Konfirmasi Kata Sandi"
-          placeholderTextColor= 'black'
-        /> */}
-
         <TouchableOpacity style={SignupPageStyle.btnMsk} onPress={handleSubmit(onSubmit)}>
-          <Text style={SignupPageStyle.txtMsk}>Daftar Sekarang!</Text>
+          <Text style={SignupPageStyle.txtMsk}>Daftar Sekarang</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={SignupPageStyle.btnLupa} onPress={() => navigation.navigate('LoginPage')}>
+
+        {/* ANIMASI LOADING */}
+
+        {/* <TouchableOpacity style={SignupPageStyle.btnLupa} onPress={() => navigation.navigate('LoginPage')}>
           <Text style={SignupPageStyle.txtLupa}>Sudah punya akun? Silahkan masuk!</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
     </KeyboardAwareScrollView>
-    <FlashMessage position="top"/>
+    <FlashMessage position="top" ref={SignupPageRef}/>
     </SafeAreaView>
   );
 };
@@ -181,7 +215,7 @@ const SignupPageStyle = StyleSheet.create(
       width: 151,
       height: 62,
       left: 137,
-      top: 40,
+      top: 60,
       fontFamily: "WLUIBesley",
       fontStyle: "normal",
       fontWeight: "400",
@@ -194,7 +228,7 @@ const SignupPageStyle = StyleSheet.create(
       "width": 277,
       "height": 46,
       "left": 65,
-      "top": 40,
+      "top": 50,
       "fontFamily": "WLUIBesley",
       "fontStyle": "normal",
       "fontWeight": "600",
@@ -213,7 +247,7 @@ const SignupPageStyle = StyleSheet.create(
       "height": 50,
       "left": 71,
       "top": 40,
-      borderColor: '#7D8F35',
+      borderColor: '#FFA1A1',
       borderRadius: 8,
     },
     NoTelpError : {
@@ -239,7 +273,7 @@ const SignupPageStyle = StyleSheet.create(
       "height": 50,
       "left": 71,
       "top": 50,
-      borderColor: '#7D8F35',
+      borderColor: '#FFA1A1',
       borderRadius: 8,
     },
     EmailError : {
@@ -265,7 +299,7 @@ const SignupPageStyle = StyleSheet.create(
       "height": 50,
       "left": 71,
       "top": 60,
-      borderColor: '#7D8F35',
+      borderColor: '#FFA1A1',
       borderRadius: 8,
     },
     PassError : {
@@ -292,7 +326,7 @@ const SignupPageStyle = StyleSheet.create(
       "height": 50,
       "left": 71,
       "top": 70,
-      borderColor: '#7D8F35',
+      borderColor: '#FFA1A1',
       borderRadius: 8,
     },
     Pass2Error : {
@@ -310,9 +344,9 @@ const SignupPageStyle = StyleSheet.create(
     },
     btnMsk: {
       "width": 270,
-      "height": 40,
+      "height": 50,
       "left": 71,
-      "top": 100,
+      "top": 125,
       "backgroundColor": "#7D8F35",
       "borderWidth": 1,
       "borderColor": "#7D8F35",
@@ -326,8 +360,8 @@ const SignupPageStyle = StyleSheet.create(
     txtMsk: {
       "width": 158,
       "left": 55,
-      "top": 10,
-      "fontFamily": "Alice",
+      "top": 15,
+      "fontFamily": "Audrey",
       "fontStyle": "normal",
       "fontWeight": "400",
       "fontSize": 20,
@@ -342,6 +376,7 @@ const SignupPageStyle = StyleSheet.create(
       "left": 71,
       "top": 120,
       "backgroundColor": "##F8F8F8",
+      "fontFamily": "Audrey",
       "borderWidth": 1,
       "borderColor": "#7D8F35",
       "borderStyle": "solid",
