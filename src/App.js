@@ -14,6 +14,7 @@ import InsertCode from "./pages/BeforeLogin/ForgotPage/InsertCode";
 import ResetPass from "./pages/BeforeLogin/ForgotPage/ResetPass";
 import DashboardUser from "./pages/DashboardUser";
 import SuccessPage from "./pages/SuccessPage";
+import { DoneReset } from "./pages/BeforeLogin/ForgotPage/DoneReset";
 const Stack = createNativeStackNavigator();
 
 const App = () => {
@@ -26,6 +27,7 @@ const App = () => {
           <Stack.Screen name="ForgotPage" component={ForgotPage}/>
           <Stack.Screen name="InsertCode" component={InsertCode}/>
           <Stack.Screen name="ResetPass" component={ResetPass}/>
+          <Stack.Screen name="DoneReset" component={DoneReset}/>
           <Stack.Screen name="DashboardUser" component={DashboardUser}/>
         </Stack.Navigator>
       </NavigationContainer>

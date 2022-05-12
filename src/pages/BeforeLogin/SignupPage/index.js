@@ -22,10 +22,10 @@ export const SignupPage = ({navigation}) => {
 
   const { control, handleSubmit, watch, formState: { errors } } = useForm({
     defaultValues: {
-      NoTelp: '082186277470',
-      Email: 'andikafadilla.af@gmail.com',
-      Pass: 'welove123',
-      Pass2: 'welove123',
+      NoTelp: '',
+      Email: '',
+      Pass: '',
+      Pass2: '',
     }
   });
 

@@ -21,7 +21,7 @@ export const ForgotPage = ({navigation}) => {
 
   const { control, handleSubmit, getValues, formState: { errors } } = useForm({
     defaultValues: {
-      Email: 'andikafadilla.af@gmail.com',
+      Email: '',
     }
   });
 
@@ -68,57 +68,57 @@ export const ForgotPage = ({navigation}) => {
     return (
         <SafeAreaView style={{flex:1,paddingTop: StatusBar.currentHeight}}>
           <KeyboardAwareScrollView keyboardShouldPersistTaps={'always'}
-        contentContainerStyle={{flexGrow:1}}
-        showsVerticalScrollIndicator={false} >
-          {shouldShow ? <ActivityIndicator  size="large" /> : null}
-          <Image
-            source={require("../../../assets/img/BeforeLogin/logo.png")}
-            style={LoginPageStyle.Logo}
-          />
-          <Text style={LoginPageStyle.text}>
-            Kami akan mengirimkan kode untuk mengatur ulang kata sandi anda
-          </Text>
-          
-          <Image source={require("../../../assets/img/BeforeLogin/user.png")} style={LoginPageStyle.imgEmail}/>
-          <Controller
-        control={control}
-        rules={{
-         required: true,
-         pattern: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
-        }}
-        render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            style={LoginPageStyle.inputEmail}
-            onBlur={onBlur}
-            onChangeText={onChange}
-            value={value}
-            placeholder= "Email"
-            placeholderTextColor= 'black'
-          />
-        )}
-        name="Email"
-      />
-      {errors.Email && <Text style={LoginPageStyle.EmailError}>email tidak valid</Text>}
+          contentContainerStyle={{flexGrow:1}}
+          showsVerticalScrollIndicator={false} >
+            {shouldShow ? <ActivityIndicator  size="large" /> : null}
+            <Image
+              source={require("../../../assets/img/BeforeLogin/logo.png")}
+              style={ForgotPageStyle.Logo}
+            />
+            <Text style={ForgotPageStyle.text}>
+              Kami akan mengirimkan kode untuk mengatur ulang kata sandi anda
+            </Text>
+            
+            <Image source={require("../../../assets/img/BeforeLogin/user.png")} style={ForgotPageStyle.imgEmail}/>
+            <Controller
+          control={control}
+          rules={{
+          required: true,
+          pattern: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              style={ForgotPageStyle.inputEmail}
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              placeholder= "Email"
+              placeholderTextColor= 'black'
+            />
+          )}
+          name="Email"
+        />
+        {errors.Email && <Text style={ForgotPageStyle.EmailError}>email tidak valid</Text>}
 
-          {/* <TextInput 
-            style={LoginPageStyle.inputEmail}
-            placeholder= "Masukkan email yang terdaftar"
-            placeholderTextColor= 'black'
-          /> */}
+            {/* <TextInput 
+              style={ForgotPageStyle.inputEmail}
+              placeholder= "Masukkan email yang terdaftar"
+              placeholderTextColor= 'black'
+            /> */}
 
-          <TouchableOpacity style={LoginPageStyle.btnMsk} onPress={handleSubmit(onSubmit)}>
-            <Text style={LoginPageStyle.txtMsk}>Kirim Kode</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={LoginPageStyle.btnNew} onPress={() => navigation.navigate('SignupPage')}>
-            <Text style={LoginPageStyle.txtNew}>Buat Akun Baru</Text>
-          </TouchableOpacity>
+            <TouchableOpacity style={ForgotPageStyle.btnSend} onPress={handleSubmit(onSubmit)}>
+              <Text style={ForgotPageStyle.txtSend}>Kirim Kode</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={ForgotPageStyle.btnNew} onPress={() => navigation.navigate('SignupPage')}>
+              <Text style={ForgotPageStyle.txtNew}>Buat Akun Baru</Text>
+            </TouchableOpacity>
           </KeyboardAwareScrollView>
           <FlashMessage position="top" ref={ForgotPageRef}/>
         </SafeAreaView>
       );
 }
 
-const LoginPageStyle = StyleSheet.create(
+const ForgotPageStyle = StyleSheet.create(
     {
       Logo : {
         "width": 222,
@@ -175,7 +175,7 @@ const LoginPageStyle = StyleSheet.create(
         resizeMode: 'stretch',
         alignItems: 'center',
       },
-      btnMsk: {
+      btnSend: {
         "width": 270,
         "height": 40,
         "left": 71,
@@ -190,7 +190,7 @@ const LoginPageStyle = StyleSheet.create(
         "borderBottomRightRadius": 6,
         "borderBottomLeftRadius": 6
       },
-      txtMsk: {
+      txtSend: {
         "width": 158,
         "left": 55,
         "top": 10,

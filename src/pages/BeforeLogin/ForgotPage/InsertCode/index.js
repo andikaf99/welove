@@ -3,14 +3,16 @@ import {
   StyleSheet,
   Image,
   Text,
-  View,
   TouchableOpacity,
   TextInput,
   ActivityIndicator,
+  StatusBar,
 } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import * as Axios from 'axios';
 import FlashMessage, { showMessage } from "react-native-flash-message";
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 export const InsertCode = ({route, navigation}) => {
 
@@ -22,13 +24,16 @@ export const InsertCode = ({route, navigation}) => {
       Email: '',
     }
   });
+
+  const {EmailParams} = route.params;
+  setValue("Email",EmailParams);
+  
   const [shouldShow, setShouldShow] = useState(false);
   const configAxios = {
     onUploadProgress: () => setShouldShow(true)
   }
-  const {EmailParams} = route.params;
+
   const onSubmit = (data) => {
-    setValue("Email",EmailParams);
       Axios.post('https://api.welove.web.id/index.php/BeforeLogin/InsertCode', data, configAxios).then(res => {  
       console.log(res);
       if(res.status == '200')
@@ -76,12 +81,15 @@ export const InsertCode = ({route, navigation}) => {
 
 
     return (
-        <View>
+        <SafeAreaView style={{flex:1,paddingTop: StatusBar.currentHeight}}>
+          <KeyboardAwareScrollView keyboardShouldPersistTaps={'always'}
+          contentContainerStyle={{flexGrow:1}}
+          showsVerticalScrollIndicator={false}>
           <Image
             source={require("../../../../assets/img/BeforeLogin/logo.png")}
-            style={LoginPageStyle.Logo}
+            style={InsertCodeStyle.Logo}
           />
-          <Text style={LoginPageStyle.text}>
+          <Text style={InsertCodeStyle.text}>
           Cek kotak email kamu untuk mendapatkan kode verifikasi perubahan kata sandi
           </Text>
           {shouldShow ? <ActivityIndicator  size="large" /> : null}
@@ -95,7 +103,7 @@ export const InsertCode = ({route, navigation}) => {
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput 
-            style={LoginPageStyle.inputEmail}
+            style={InsertCodeStyle.inputCode}
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
@@ -105,30 +113,29 @@ export const InsertCode = ({route, navigation}) => {
           )} 
           name="Code"
           />
-          {errors.Code && <Text style={LoginPageStyle.EmailError}>kode tidak valid</Text>}
-          <TouchableOpacity style={LoginPageStyle.btnMsk} onPress={handleSubmit(onSubmit)}>
-            <Text style={LoginPageStyle.txtMsk}>Submit</Text>
+          {errors.Code && <Text style={InsertCodeStyle.CodeError}>kode tidak valid</Text>}
+          <TouchableOpacity style={InsertCodeStyle.btnSubmit} onPress={handleSubmit(onSubmit)}>
+            <Text style={InsertCodeStyle.txtSubmit}>Submit</Text>
           </TouchableOpacity>
+          </KeyboardAwareScrollView>
           <FlashMessage position="top" ref={InsertCodeRef}/>
-        </View>
+        </SafeAreaView>
       );
 }
 
-const LoginPageStyle = StyleSheet.create(
+const InsertCodeStyle = StyleSheet.create(
     {
       Logo : {
-        "position": "absolute",
         "width": 222,
         "height": 185,
         "left": 95,
         "top": 40
       },
       text : {
-        "position": "absolute",
         "width": 277,
         "height": 46,
         "left": 65,
-        "top": 235,
+        "top": 30,
         "fontFamily": "WLUIBesley",
         "fontStyle": "normal",
         "fontWeight": "600",
@@ -137,11 +144,11 @@ const LoginPageStyle = StyleSheet.create(
         "textAlign": "center",
         "color": "rgba(0, 0, 0, 0.41)"
       },
-      EmailError : {
+      CodeError : {
         "width": 150,
         "height": 20,
         "left": 50,
-        "top": 365,
+        "top": 50,
         "fontFamily": "WLUIBesley",
         "fontStyle": "normal",
         "fontWeight": "600",
@@ -150,60 +157,24 @@ const LoginPageStyle = StyleSheet.create(
         "textAlign": "center",
         "color": "#FC4F4F"
       },
-      inputEmail: {
+      inputCode: {
         borderWidth: 1,
         fontFamily: "Alice",
         fontStyle: "normal",
         fontWeight: "400",
         fontSize: 15,
-        "position": "absolute",
         "width": 270,
         "height": 44,
         "left": 71,
-        "top": 320,
+        "top": 50,
         borderColor: '#7D8F35',
         borderRadius: 8,
       },
-      imgEmail: {
-        padding: 10,
-        margin: 5,
-        height: 25,
-        width: 25,
-        top: 325,
-        left: 30,
-        resizeMode: 'stretch',
-        alignItems: 'center',
-      },
-      inputPass: {
-        borderWidth: 1,
-        fontFamily: "Alice",
-        fontStyle: "normal",
-        fontWeight: "400",
-        fontSize: 15,
-        "position": "absolute",
-        "width": 270,
-        "height": 44,
-        "left": 71,
-        "top": 380,
-        borderColor: '#7D8F35',
-        borderRadius: 8,
-      },
-      imgPass: {
-        padding: 10,
-        margin: 5,
-        height: 25,
-        width: 25,
-        top:360,
-        left: 30,
-        resizeMode: 'stretch',
-        alignItems: 'center',
-      },
-      btnMsk: {
-        "position": "absolute",
+      btnSubmit: {
         "width": 270,
         "height": 40,
         "left": 71,
-        "top": 460,
+        "top": 150,
         "backgroundColor": "#7D8F35",
         "borderWidth": 1,
         "borderColor": "#7D8F35",
@@ -214,8 +185,7 @@ const LoginPageStyle = StyleSheet.create(
         "borderBottomRightRadius": 6,
         "borderBottomLeftRadius": 6
       },
-      txtMsk: {
-        "position": "absolute",
+      txtSubmit: {
         "width": 158,
         "left": 55,
         "top": 10,
@@ -227,66 +197,6 @@ const LoginPageStyle = StyleSheet.create(
         "textAlign": "center",
         "letterSpacing": 0.25,
         "color": "#ffff"
-      },
-      btnLupa: {
-        "position": "absolute",
-        "width": 270,
-        "height": 40,
-        "left": 71,
-        "top": 510,
-        "backgroundColor": "#F8F8F8",
-        "borderWidth": 1,
-        "borderColor": "#7D8F35",
-        "borderStyle": "solid",
-        "boxSizing": "border-box",
-        "borderTopLeftRadius": 6,
-        "borderTopRightRadius": 6,
-        "borderBottomRightRadius": 6,
-        "borderBottomLeftRadius": 6
-      },
-      txtLupa: {
-        "position": "absolute",
-        "width": 200,
-        "left": 35,
-        "top": 10,
-        "fontFamily": "Alice",
-        "fontStyle": "normal",
-        "fontWeight": "400",
-        "fontSize": 20,
-        "lineHeight": 21,
-        "textAlign": "center",
-        "letterSpacing": 0.25,
-        "color": "#7D8F35"
-      },
-      btnNew: {
-        "position": "absolute",
-        "width": 270,
-        "height": 40,
-        "left": 71,
-        "top": 510,
-        "backgroundColor": "#F8F8F8",
-        "borderWidth": 1,
-        "borderColor": "#7D8F35",
-        "borderStyle": "solid",
-        "boxSizing": "border-box",
-        "borderTopLeftRadius": 6,
-        "borderTopRightRadius": 6,
-        "borderBottomRightRadius": 6,
-        "borderBottomLeftRadius": 6
-      },
-      txtNew: {
-        "position": "absolute",
-        "width": 200,
-        "left": 35,
-        "top": 10,
-        "fontFamily": "Alice",
-        "fontStyle": "normal",
-        "fontWeight": "400",
-        "fontSize": 20,
-        "lineHeight": 21,
-        "textAlign": "center",
-        "letterSpacing": 0.25,
-        "color": "#7D8F35"
       },
     }
   )
