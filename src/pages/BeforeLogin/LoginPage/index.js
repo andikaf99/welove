@@ -25,8 +25,8 @@ export const LoginPage = ({navigation}) => {
 
   const { control, handleSubmit, formState: { errors } } = useForm({
     defaultValues: {
-      Email: '',
-      Pass: '',
+      Email: 'andikafadilla.af@gmail.com',
+      Pass: '33333333',
     }
   });
 
